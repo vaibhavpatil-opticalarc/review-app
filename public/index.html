@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Review App</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/style.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>Reviews</h1>
+    <ul id="reviews">
+      <!-- Reviews will be displayed here -->
+    </ul>
+    <form action="/reviews" method="POST" id="review-form">
+      <input type="text" name="text" placeholder="Write a review..." required />
+      <button type="submit">Submit</button>
+    </form>
+    <!-- <script src="./script.js"></script> -->
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const reviewForm = document.getElementById("review-form");
+      const reviewsList = document.getElementById("reviews");
+
+      axios.get("/reviews").then((response) => {
+        console.log("response back on frontend", response);
+        let review = response.data;
+        for (let r of review) {
+          const newReviewItem = document.createElement("li");
+          newReviewItem.textContent = r.text;
+          reviewsList.appendChild(newReviewItem);
+        }
+      });
+
+      reviewForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const reviewText = reviewForm.querySelector('input[name="text"]').value;
+
+        axios
+          .post("/reviews", { text: reviewText })
+          .then((response) => {
+            reviewForm.querySelector('input[name="text"]').value = "";
+          })
+          .catch((error) => console.error(error, "================"));
+      });
+    });
+  </script>
+</html>
